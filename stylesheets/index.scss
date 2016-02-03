@@ -1,0 +1,129 @@
+
+* {
+    -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+}
+
+body {
+    -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+    -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
+    -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+    font-family:'HelveticaNeue-Light', 'HelveticaNeue', Helvetica, Arial, sans-serif;
+    font-size:12px;
+    height:100%;
+    margin:0px;
+    padding:0px;
+    width:100%;
+}
+
+h1 
+{
+    font-size:24px;
+    font-weight:normal;
+    margin:0px;
+    overflow:visible;
+    padding:0px;
+    text-align:center;
+}
+/*Home Page*/
+.home
+{
+    max-width:100%;
+    width:800px;
+    margin: 0 auto;
+    position:relative;
+    text-align:center;
+    .controls
+    {
+        .input-symbol
+        {
+            display: inline-block;
+            position: relative;
+        }
+    }
+    .showcase
+    {
+        background:black;
+        position:relative;
+    }
+    .img-wrapper
+    {
+        overflow:hidden;
+        position:relative;
+        margin: 0 auto;
+        textarea
+        {
+            width:100%;
+            height:100%;
+            text-align: center;
+            vertical-align: top;
+            text-transform: uppercase;
+            webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            background: transparent;
+            color:white;
+            outline:none;
+            font-size:36px;
+            padding: 0!important;
+            margin: 0!important;
+            border: 0!important;
+            border:none !important;
+            resize: none;
+            overflow: visible;
+            text-shadow: 2px 2px 2px #000,-2px -2px 2px #000,2px -2px 2px #000,-2px 2px 2px #000,2px -2px 2px #000,2px 2px 2px #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px -2px 0 #000
+        }
+        .meme-textcontrol-dragoverlay
+        {
+            position: absolute;
+            z-index: 3;
+            height: 100%;
+            width: 100%;
+        }
+        .txt-box
+        {
+            color:white;
+            position:absolute;
+            visibility:visible;
+            border:none !important;
+        }
+        .hide
+        {
+            visibility:collapse !important;
+        }
+        .top
+        {
+            top:20px;
+        }
+        .bottom 
+        {
+            bottom:20px;
+        }
+    }
+    .transparent-txt-box
+    {
+        outline: 1px dashed #ddd;
+        background: transparent!important;
+        color:white;
+        font-weight: 500;
+        text-align: center;
+        padding:10px;
+        text-transform:uppercase;
+        width: 50%;
+        height:auto;
+        min-height: 3em;
+        cursor: move;
+    }
+}
+.ui-resizable-se 
+{
+    position: absolute;
+    background: url(//s.imgur.com/images/resize.png) left top;
+    bottom: 0;
+    right: 0;
+    width: 24px;
+    height: 24px;
+    z-index:2;
+    cursor: se-resize;
+}
+
+
