@@ -10,6 +10,12 @@
         <title>Hello World</title>
     </head>
     <body>
+        <nav>
+            <div class="top-right">
+                <img src="lib/icons/grumpy_cat.png"/>
+                <span>Meme Generator</meme>
+            </div>
+        </nav>
         <div class="app container">
             <div class="home">
                 <h1>Meme Generator</h1>
@@ -26,11 +32,11 @@
                         <canvas id="meme-canvas">
                             Your browser does not support the HTML5 canvas tag.
                         </canvas>
-                        <div class="top txt-box ui-widget-content transparent-txt-box hide" style="top:0px;">
+                        <div class="top txt-box ui-widget-content transparent-txt-box hide">
                             <div class="meme-textcontrol-dragoverlay"></div>
                             <textarea class="ui-widget-header">Top Text</textarea>
                         </div>
-                        <div class="bottom txt-box ui-widget-content transparent-txt-box hide" style="bottom:0px;">
+                        <div class="bottom txt-box ui-widget-content transparent-txt-box hide">
                             <div class="meme-textcontrol-dragoverlay"></div>
                             <textarea class="ui-widget-header">Bottom Text</textarea>
                         </div>
@@ -41,8 +47,6 @@
                 </div>
             </div>
         </div>
-        <div id="test" style="position:relative;">
-            </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script>
         <script type="text/javascript">
             if(window && !window.$ && !window.jQuery && module && module.exports && module.exports){
