@@ -9,29 +9,38 @@ const BrowserWindow = electron.BrowserWindow;
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let prefWindow;
 
-function createWindow () {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600});
-
-  // and load the index.html of the app.
-  mainWindow.loadURL('file://' + __dirname + '/index.html');
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function() {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
-  });
-}
+const ipcMain = require('electron').ipcMain;
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-app.on('ready', createWindow);
+app.on('ready', function() {
+    // Create the browser window.
+    mainWindow = new BrowserWindow({width: 1200, height: 1200});
+
+    // and load the index.html of the app.
+    mainWindow.loadURL('file://' + __dirname + '/views/index.html');
+
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools();
+    
+    // Emitted when the window is closed.
+    mainWindow.on('closed', function() {
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+        mainWindow = null
+        prefWindow = null
+    }); 
+    
+    prefWindow = new BrowserWindow({
+        width: 450,
+        height: 540,
+        show: false
+    }) 
+    prefWindow.loadURL('file://' + __dirname + '/views/preferences.html')  
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -49,3 +58,14 @@ app.on('activate', function () {
     createWindow();
   }
 });
+
+ipcMain.on('toggle-dev-tools', function(event, args){
+    if(mainWindow.webContents.isDevToolsOpened())
+        mainWindow.webContents.closeDevTools()
+    else
+        mainWindow.webContents.openDevTools()
+})
+
+ipcMain.on('show-prefs', function() {
+    prefWindow.show()
+})

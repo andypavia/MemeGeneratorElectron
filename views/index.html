@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href="stylesheets/index.css">
+        <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" data-require="bootstrap-css@3.1.1" data-semver="3.2.0">
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+        <title>Hello World</title>
+    </head>
+    <body>
+        <nav>
+            <div class="top-right">
+                <img src="lib/icons/grumpy_cat.png"/>
+                <span>Meme Generator</meme>
+            </div>
+        </nav>
+        <div class="app container">
+            <div class="home">
+                <h1>Meme Generator</h1>
+                <div class="top-controls controls">
+                    <div class="input-symbol">
+                        <label class="btn btn-primary" for="my-file-selector">
+                            <input id="my-file-selector" class="new-meme"" type="file" style="display:none;">
+                            Upload background
+                        </label>
+                    </div>
+                </div>
+                <div class="showcaser">
+                    <div class="img-wrapper">
+                        <canvas id="meme-canvas">
+                            Your browser does not support the HTML5 canvas tag.
+                        </canvas>
+                        <div class="top txt-box ui-widget-content transparent-txt-box hide">
+                            <div class="meme-textcontrol-dragoverlay"></div>
+                            <textarea class="ui-widget-header" wrap="on">Top Text</textarea>
+                        </div>
+                        <div class="bottom txt-box ui-widget-content transparent-txt-box hide">
+                            <div class="meme-textcontrol-dragoverlay"></div>
+                            <textarea class="ui-widget-header" wrap="on">Bottom Text</textarea>
+                        </div>
+                    </div> 
+                </div>
+                <div class="bottom-controls controls hide">
+                    <a class="btn btn-primary btn-download">Download</a>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script>
+        <script type="text/javascript">
+            if(window && !window.$ && !window.jQuery && module && module.exports && module.exports){
+            window.$ = window.jQuery = module.exports;
+            }
+        </script>
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <script type="text/javascript" src="index.js"></script>
+    </body>
+</html>
