@@ -8,23 +8,20 @@ var menu = Menu.buildFromTemplate([
             {
                 label:'Refresh'
                 , click: function() {
-                    window.location.reload()
-                    console.log('reload')
+                    var remote = require('remote')
+                    remote.getCurrentWindow().reload()
                 }
             }
             , {
                 label:'Developer Tools'
                 , click: function() {
-                    //mainWindow.webContents.openDevTools();
                     ipcRenderer.send('toggle-dev-tools')
-                    console.log('toggle dev tools')
                 }
             }
             , {
                 label:'Preferences'
                 , click: function() {
                     ipcRenderer.send('show-prefs')
-                    console.log('show preferences')
                 }
             }
         ]
@@ -90,7 +87,7 @@ var bindEvents = function() {
          adjustText($('.top.txt-box')) 
     })
     $('.bottom.txt-box textarea').keyup(function(){
-          adjustText($('.bottom.txt-box')) 
+        adjustText($('.bottom.txt-box')) 
     })
     $('.btn-download').click(function() {
         prepareCanvasForDownload()
@@ -111,8 +108,8 @@ var addMoveCursor = function(selector) {
 }
 var cleanSlate = function() {
     cleanCanvas(ctx, canvas)
-    $('.top.txt-box').removeAttr("style")
-    $('.bottom.txt-box').removeAttr("style")
+    $('.top.txt-box').attr('style', 'left:12px; top:12px;')
+    $('.bottom.txt-box').attr('style', 'left:12px; bottom:12px;')
 }
 var cleanCanvas = function(context, canvas) {
     context.clearRect(0, 0, canvas.width, canvas.height)
@@ -129,10 +126,10 @@ var adjustText = function(textbox) {
         , width = parseInt(textbox.width())
         , chars = textarea.val().length
         , charSize = parseInt(textarea.css('font-size'))
-    while(width * height < Math.pow(charSize, 2.05) * chars){
+    while(width * height < Math.pow(charSize, 2.1) * chars + 2 * width * charSize){
         charSize-=1
     }
-    while(width * height > Math.pow(charSize, 2.05) * chars + width * charSize){
+    while(width * height > Math.pow(charSize, 2.1) * chars + width * charSize){
         charSize+=1
     }
     textarea.css('font-size', charSize)
@@ -140,24 +137,31 @@ var adjustText = function(textbox) {
     textbox.width(width)    
 }
 var prepareCanvasForDownload = function() {   
+    //Creating shadow canvas and context
     var shadowCanvas = document.createElement('canvas')
     shadowCanvas.id = 'shadow-canvas'
     shadowCanvas.setAttribute('height', canvas.getAttribute('height'))
     shadowCanvas.setAttribute('width', canvas.getAttribute('width'))
     document.body.appendChild(shadowCanvas)
     var shadowCtx = shadowCanvas.getContext('2d');
-    var bottomTxtBox = $('.bottom.txt-box')
+    //Styling top textbox and text area 
     var topTxtBox = $('.top.txt-box')
     var topTextarea =  $('.top.txt-box textarea')
-    var bottomTextarea = $('.bottom.txt-box textarea')
     topTextarea.html(topTextarea.val())
-    bottomTextarea.html(bottomTextarea.val())
-    var stylingBottomTxtBox = ' top:' +  bottomTxtBox.css('top') + '; left:' +  bottomTxtBox.css('left') + '; height:' +  bottomTxtBox.css('height') +'; width:' + bottomTxtBox.css('width') +'; ' + (bottomTxtBox.css('top') === 'auto' ? 'bottom:0px;' : '')
-    var stylingTopTxtBox = ' top:' + (topTxtBox.css('top') === 'auto' ? '0px;' : topTxtBox.css('top')) + '; left:' +  topTxtBox.css('left') + '; height:' +  topTxtBox.css('height') +'; width:' +  topTxtBox.css('width') +'; '
-    var stylingTxtBox = ' padding: 0px; margin:0px; background: transparent !important; color:white; font-weight: 500; text-transform:uppercase; cursor: move; position:absolute; border:none !important;'
+    var topPosTopTxtBox = topTxtBox.css('top') === 'auto' ? '0px;' : topTxtBox.css('top')
     var stylingTopTextarea = 'font-size:' +  topTextarea.css('font-size') + ';'
+    var stylingTopTxtBox = ' top:' + topPosTopTxtBox + '; left:' +  topTxtBox.css('left') + '; height:' +  topTxtBox.css('height') +'; width:' +  topTxtBox.css('width') +'; '
+    //Styling bottom textbox and text area 
+    var bottomTxtBox = $('.bottom.txt-box')
+    var bottomTextarea = $('.bottom.txt-box textarea')
+    bottomTextarea.html(bottomTextarea.val())
+    var topPosBottomTxtBox = bottomTxtBox.css('top') === 'auto' ? (parseInt(canvas.getAttribute('height')) - parseInt(bottomTxtBox.css('height')) - 12) + 'px': bottomTxtBox.css('top')
+    var stylingBottomTxtBox =  'top:' + topPosBottomTxtBox + '; left:' +  bottomTxtBox.css('left') + '; height:' +  bottomTxtBox.css('height') +'; width:' + bottomTxtBox.css('width') +'; '
     var stylingBottomTextarea = 'font-size:' +  bottomTextarea.css('font-size') + ';'
-    var stylingTextArea = "overflow: hidden; padding: 0px; margin:0px; font-family: 'sans-serif';text-align:center; border:none; width:100%; height:100%; vertical-align: top; text-transform: uppercase;webkit-box-sizing: border-box;-moz-box-sizing: border-box; box-sizing: border-box; background: transparent; color:white; outline:none; resize: none; text-shadow: 2px 2px 2px #000,-2px -2px 2px #000,2px -2px 2px #000,-2px 2px 2px #000,2px -2px 2px #000,2px 2px 2px #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px -2px 0 #000;"
+    //General styling   
+    var stylingTxtBox = ' padding: 0px; margin:0px; background: transparent !important; color:white; text-transform:uppercase; cursor: move; position:absolute; border:none !important;'
+    var stylingTextArea = "overflow: hidden; padding: 0px; margin:0px; font-family: Arial; font-weight: 700; text-align:center; border:none; width:100%; height:100%; vertical-align: top; text-transform: uppercase;webkit-box-sizing: border-box;-moz-box-sizing: border-box; box-sizing: border-box; background: transparent; color:white; outline:none; resize: none; text-shadow: 2px 2px 2px #000,-2px -2px 2px #000,2px -2px 2px #000,-2px 2px 2px #000,2px -2px 2px #000,2px 2px 2px #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px -2px 0 #000;"
+    //DOM elements to be inserted into the canvas
     var data = '<svg xmlns="http://www.w3.org/2000/svg" width="' + canvas.getAttribute('width') + '" height="' + canvas.getAttribute('height') + '">' +
            '<foreignObject width="100%" height="100%" style="position:relative; display:block;">' +
            '<div xmlns="http://www.w3.org/1999/xhtml" style="position:relative; display:block;">' +
@@ -196,5 +200,6 @@ var prepareCanvasForDownload = function() {
     $('#shadow-btn').html('download')
     $('#shadow-btn')[0].click()
 }
+
 
  

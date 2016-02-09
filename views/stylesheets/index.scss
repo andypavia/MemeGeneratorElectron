@@ -1,13 +1,35 @@
-
-* {
-    -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+//Colors
+$turquise: #58d0b8;
+$contrast-red: #f65555;
+$dark-grey:#495a56;
+$mellow-grey:#f4f6f6;
+//UI elements attr
+$nav-color: $turquise;
+$nav-heigth: 65px;
+$btn-color: $contrast-red;
+$normal-font-color:$dark-grey;
+$body-background-color:$mellow-grey;
+//Mixins
+@mixin upper-case() 
+{
+    letter-spacing: 0.05em;
+    text-transform: uppercase;  
 }
-
-body {
-    -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
-    -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
-    -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+@mixin horizontal-center 
+{
+	position: absolute;
+	left: 50%;
+	-webkit-transform: translateX(-50%);
+	-moz-transform: translateX(-50%);
+	-ms-transform: translateX(-50%);
+	-o-transform: translateX(-50%);
+	transform: translateX(-50%);
+}
+body 
+{
     font-family:'HelveticaNeue-Light', 'HelveticaNeue', Helvetica, Arial, sans-serif;
+    color:$normal-font-color !important;
+    background-color: $body-background-color !important;
     font-size:12px;
     height:100%;
     margin:0px;
@@ -24,10 +46,51 @@ h1
     padding:0px;
     text-align:center;
 }
+.btn-3d
+{
+    box-shadow: 0px 0.15em #dd4d4d;
+    color: white;    
+    background-color: $contrast-red;
+    display: block;
+	font-family: 'Segoe UI Light', 'HelveticaNeue-UltraLight', 'Helvetica Neue Ultra Light', sans-serif;
+	font-weight:600;
+    text-decoration: none;
+	border-radius: 4px;
+	border: 0;
+	outline: none;
+	height: 44px;
+    font-size: 14px;
+	text-align: center;
+	line-height: 44px;
+	margin-top: -22px;
+	text-shadow: 0 -1px -1px #dd4d4d;
+	box-shadow: 0 4px 0 #dd4d4d, 0 5px 5px 1px rgba(0, 0, 0, 0.4);
+	transition: all 0.05s ease-in-out; 
+    padding-left: 12px;
+    padding-right: 12px;
+    @include upper-case();   
+}
+.btn-3d:active
+{
+    margin-top: -18px;
+	box-shadow: none;
+}
+.btn-3d:hover
+{
+    background-color: #cd3d3d;
+	text-shadow: 0 -1px -1px #c4402f;
+    text-decoration: none;
+    color:white;
+}
+.offset-btn-3d
+{
+    padding-top:22px;
+    height:66px;
+}
 nav
 {
-    height:65px;
-    background-color:#39d5ff;
+    height:$nav-heigth;
+    background-color:$nav-color;
     position: relative;
     img
     {
@@ -42,6 +105,7 @@ nav
         line-height: 65px;
         color:white;
         vertical-align: middle;
+        font-family: 'Segoe UI Light', 'HelveticaNeue-UltraLight', 'Helvetica Neue Ultra Light', sans-serif;
     }
 }
 /*Prefs page*/
@@ -63,13 +127,32 @@ nav
     margin: 0 auto;
     position:relative;
     text-align:center;
-    .btn
+    .top-controls
     {
-        margin:10px;
+        position: relative;
+        text-align: center;
+        padding-top: 20px;
+        .input-symbol
+        {
+            position: relative;
+        }
+        .btn-3d
+        {
+            @include horizontal-center();
+        }
+    }
+    .bottom-controls
+    {
+        .btn-3d
+        {
+            @include horizontal-center();
+        }
     }
     .showcaser
     {
         position:relative;
+        padding-top: 10px;
+        padding-bottom: 20px;
     }
     .img-wrapper
     {
@@ -94,8 +177,8 @@ nav
             color:white;
             outline:none;
             font-size:36px;
-            font-family: 'sans-serif';
-            font-weight:500;
+            font-family: Arial;
+            font-weight: 700;
             padding: 0!important;
             margin: 0!important;
             border:none !important;
@@ -135,7 +218,6 @@ nav
         outline: 1px dashed #ddd;
         background: transparent!important;
         color:white;
-        font-weight: 500;
         text-transform:uppercase;
         cursor: move;
     }

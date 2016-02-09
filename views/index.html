@@ -18,12 +18,11 @@
         </nav>
         <div class="app container">
             <div class="home">
-                <h1>Meme Generator</h1>
                 <div class="top-controls controls">
-                    <div class="input-symbol">
-                        <label class="btn btn-primary" for="my-file-selector">
+                    <div class="input-symbol offset-btn-3d">
+                        <label class="btn-3d" for="my-file-selector">
                             <input id="my-file-selector" class="new-meme"" type="file" style="display:none;">
-                            Upload background
+                            Upload new picture
                         </label>
                     </div>
                 </div>
@@ -32,18 +31,20 @@
                         <canvas id="meme-canvas">
                             Your browser does not support the HTML5 canvas tag.
                         </canvas>
-                        <div class="top txt-box ui-widget-content transparent-txt-box hide">
+                        <div class="top txt-box ui-widget-content transparent-txt-box hide" style="left: 12px; top: 12px;">
                             <div class="meme-textcontrol-dragoverlay"></div>
                             <textarea class="ui-widget-header" wrap="on">Top Text</textarea>
                         </div>
-                        <div class="bottom txt-box ui-widget-content transparent-txt-box hide">
+                        <div class="bottom txt-box ui-widget-content transparent-txt-box hide" style="left: 12px; bottom: 12px;">
                             <div class="meme-textcontrol-dragoverlay"></div>
                             <textarea class="ui-widget-header" wrap="on">Bottom Text</textarea>
                         </div>
                     </div> 
                 </div>
                 <div class="bottom-controls controls hide">
-                    <a class="btn btn-primary btn-download">Download</a>
+                    <div class="input-symbol offset-btn-3d">
+                        <a class="btn-3d btn-download">Download</a>
+                    </div>
                 </div>
             </div>
         </div>
