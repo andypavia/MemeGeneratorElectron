@@ -31,15 +31,7 @@ app.on('ready', function() {
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
         mainWindow = null
-        prefWindow = null
-    }); 
-    
-    prefWindow = new BrowserWindow({
-        width: 450,
-        height: 540,
-        show: false
-    }) 
-    prefWindow.loadURL('file://' + __dirname + '/views/preferences.html')  
+    });  
 });
 
 // Quit when all windows are closed.
@@ -67,5 +59,11 @@ ipcMain.on('toggle-dev-tools', function(event, args){
 })
 
 ipcMain.on('show-prefs', function() {
+    prefWindow = new BrowserWindow({
+        width: 450,
+        height: 540,
+        show: false
+    }) 
+    prefWindow.loadURL('file://' + __dirname + '/views/preferences.html') 
     prefWindow.show()
 })
