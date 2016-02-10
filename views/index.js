@@ -50,6 +50,7 @@ var bindEvents = function() {
         var reader = new FileReader()
         reader.onload = function(e) {
             img = new Image()
+            img.setAttribute('crossOrigin', 'Anonymous')
             img.src = reader.result
             localStorage.selectedImage = reader.result 
             cleanSlate()
@@ -162,7 +163,7 @@ var prepareCanvasForDownload = function() {
     var stylingTxtBox = ' padding: 0px; margin:0px; background: transparent !important; color:white; text-transform:uppercase; cursor: move; position:absolute; border:none !important;'
     var stylingTextArea = "overflow: hidden; padding: 0px; margin:0px; font-family: Arial; font-weight: 700; text-align:center; border:none; width:100%; height:100%; vertical-align: top; text-transform: uppercase;webkit-box-sizing: border-box;-moz-box-sizing: border-box; box-sizing: border-box; background: transparent; color:white; outline:none; resize: none; text-shadow: 2px 2px 2px #000,-2px -2px 2px #000,2px -2px 2px #000,-2px 2px 2px #000,2px -2px 2px #000,2px 2px 2px #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px -2px 0 #000;"
     //DOM elements to be inserted into the canvas
-    var data = '<svg xmlns="http://www.w3.org/2000/svg" width="' + canvas.getAttribute('width') + '" height="' + canvas.getAttribute('height') + '">' +
+    var data = '<svg xmlns="http://www.w3.org/2000/svg" crossOrigin="Anonymous" width="' + canvas.getAttribute('width') + '" height="' + canvas.getAttribute('height') + '">' +
            '<foreignObject width="100%" height="100%" style="position:relative; display:block;">' +
            '<div xmlns="http://www.w3.org/1999/xhtml" style="position:relative; display:block;">' +
            '<div style="' + stylingTxtBox + stylingTopTxtBox + '">' +
@@ -180,25 +181,32 @@ var prepareCanvasForDownload = function() {
            '</svg>';
     var DOMURL = window.URL || window.webkitURL || window;
     var textImg = new Image();
+    textImg.setAttribute('crossOrigin', 'Anonymous');
     var svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
     var url = DOMURL.createObjectURL(svg);
     textImg.onload = function () {
         shadowCtx.drawImage(img, 0, 0);
         shadowCtx.drawImage(textImg, 0, 0);
         DOMURL.revokeObjectURL(url);
+        //Just for testing purposes
+        var canvasURL = shadowCanvas.toDataURL('image/jpeg');
+        var domImg = document.createElement('img')
+        domImg.setAttribute('src', canvasURL)
+        document.body.appendChild(domImg)
+        //Save file
+        saveFile(canvasURL)
     }
     textImg.src = url
-    //erase
-    var url2 =shadowCanvas.toDataURL('image/jpg');
-    
-    //shadow button
-    var btnWithDownload = document.createElement('a')
-    btnWithDownload.id = "shadow-btn"
-    document.body.appendChild(btnWithDownload)
-    $('#shadow-btn').attr('download', 'your-new-meme.jpg')
-    $('#shadow-btn').attr('herf', url) 
-    $('#shadow-btn').html('download')
-    $('#shadow-btn')[0].click()
+}
+var saveFile = function(data) {
+    var path = require('path'); 
+    var p = path.join(__dirname, '..', 'out.png');
+    var base64Data = data.replace(/^data:image\/png;base64,/, "");
+    var buff = new Buffer(base64Data, 'base64');
+    var fs = require('fs');
+    fs.writeFile(p, buff, 'base64', function(err,res) {
+        if(err) console.log(err);
+    });
 }
 
 
