@@ -49,6 +49,7 @@ h1
 .btn-3d
 {
     box-shadow: 0px 0.15em #dd4d4d;
+    cursor:pointer;
     color: white;    
     background-color: $contrast-red;
     display: block;
@@ -143,9 +144,22 @@ nav
     }
     .bottom-controls
     {
+        .input-symbol
+        {
+            position: relative;
+            display: inline-block;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+        .input-symbol.hide
+        {
+            display: none;
+        }
         .btn-3d
         {
             @include horizontal-center();
+            position: relative !important;
+            width:140px;
         }
     }
     .showcaser

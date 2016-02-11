@@ -4,7 +4,7 @@
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
-        <link rel="stylesheet" type="text/css" href="stylesheets/index.css">
+        <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
         <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" data-require="bootstrap-css@3.1.1" data-semver="3.2.0">
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
         <title>Hello World</title>
@@ -44,7 +44,10 @@
                 <div class="bottom-controls controls hide">
                     <div class="input-symbol offset-btn-3d">
                         <a class="btn-3d btn-download">Download</a>
-                    </div>
+                    </div>                    
+                    <div class="input-symbol offset-btn-3d print-symbol">
+                        <a class="btn-3d hide" id="print-btn">Print</a>
+                    </div>        
                 </div>
             </div>
         </div>
@@ -56,5 +59,6 @@
         </script>
         <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
         <script type="text/javascript" src="index.js"></script>
+        <script type="text/javascript" src="print.js"></script>
     </body>
 </html>

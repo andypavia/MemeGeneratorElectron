@@ -1,6 +1,8 @@
 const ipcRenderer = require('electron').ipcRenderer
 var remote = require('remote')
+var shell = remote.require('shell')
 var Menu = remote.require('menu')
+
 var menu = Menu.buildFromTemplate([
     {
         label: 'Meme Generator'
@@ -81,26 +83,14 @@ var bindEvents = function() {
     })
 }
 /*Helpers*/
-var removeMoveCursor = function(selector) {
-    $(selector + ' .meme-textcontrol-dragoverlay').addClass('hide')
-} 
-var addMoveCursor = function(selector) {
-    $(selector +  ' .meme-textcontrol-dragoverlay').removeClass('hide')
-}
+
 var cleanSlate = function() {
+    hidePrintBtn()
     cleanCanvas(ctx, canvas)
     $('.top.txt-box').attr('style', 'left:12px; top:12px;')
     $('.bottom.txt-box').attr('style', 'left:12px; bottom:12px;')
 }
-var cleanCanvas = function(context, canvas) {
-    context.clearRect(0, 0, canvas.width, canvas.height)
-}
-var translateTxtPosToCanvasPos = function(e){
-    return {
-        left: parseInt(e.position().left)
-        , top: parseInt(e.position().top)  
-    }
-}
+
 var adjustText = function(textbox) {
     var textarea = textbox.find('textarea')
         , height = parseInt(textbox.height())
@@ -117,6 +107,7 @@ var adjustText = function(textbox) {
     textbox.height(height)
     textbox.width(width)    
 }
+
 var prepareCanvasForDownload = function() {   
     //Creating shadow canvas and context
     var shadowCanvas = document.createElement('canvas')
@@ -129,51 +120,12 @@ var prepareCanvasForDownload = function() {
     
     //insertDOMObjsIntoCanvas(shadowCanvas, shadowCtx)
     fillTextOnCanvas(shadowCanvas)
+    
+    //show print button
+    showPrintBtn()
 }
-
-var writeFile = function(data) {
-    var path = require('path')
-    var p = path.join(__dirname, '..', 'out.png')
-    var base64Data = data.replace(/^data:image\/png;base64,/, "")
-    var buff = new Buffer(base64Data, 'base64')
-    var fs = require('fs')
-    fs.writeFile(p, buff, 'base64', function(err,res) {
-        if(err) console.log(err)
-    });
-}
-
-var readFile = function(path) {
-    var fs = require('fs')
-    fs.readFile(path, function (err, contents) {
-        if(err) console.log(err)    
-        var blob = new Blob([contents], {'type': 'image/png'})
-        addImageToCanvas(URL.createObjectURL(blob))
-    })
- }
  
- var readFileViaHttp = function(path) {
-      var http = new XMLHttpRequest();
-      http.open('GET', path, true);
-      http.responseType = 'arraybuffer';
-      http.send();
-      http.onreadystatechange = function() {
-        if (http.readyState == 4) {
-          var b64Response = arrayBufferToBase64(http.response)
-          addImageToCanvas('data:image/png;base64,' + b64Response)
-        }
-      }
- }
- 
-var readFileViaInput = function(input){
-    var file = input.files[0]
-    var reader = new FileReader()
-    reader.onload = function(e) {
-       addImageToCanvas(reader.result)                   
-    }
-    reader.readAsDataURL(file)
- }
- 
- var addImageToCanvas = function(file){
+var addImageToCanvas = function(file){
     img = new Image()
     img.setAttribute('crossOrigin', 'Anonymous')
     img.src = file
@@ -192,17 +144,7 @@ var readFileViaInput = function(input){
         })
         ctx.drawImage(img, 0, 0)
     } 
- }
- 
-var arrayBufferToBase64 = function(buffer) {
-    var binary = '';
-    var bytes = new Uint8Array(buffer);
-    var len = bytes.byteLength;
-    for (var i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
-    }
-    return window.btoa(binary);
-}
+} 
 
 var fillTextOnCanvas = function(canvas) {
     var topTxtBox = $('.top.txt-box')
@@ -258,7 +200,7 @@ var fillTextOnCanvas = function(canvas) {
     renderBox(ctx, bottomTxtBox)
     var canvasURL = canvas.toDataURL();
     writeFile(canvasURL)
-  }
+}
 
 var insertDOMObjsIntoCanvas = function(shadowCanvas, shadowCtx) {
     //Styling top textbox and text area 
@@ -309,4 +251,86 @@ var insertDOMObjsIntoCanvas = function(shadowCanvas, shadowCtx) {
     }
     textImg.setAttribute('crossOrigin', 'Anonymous');
     textImg.src = url
+}
+
+var removeMoveCursor = function(selector) {
+    $(selector + ' .meme-textcontrol-dragoverlay').addClass('hide')
+}
+ 
+var addMoveCursor = function(selector) {
+    $(selector +  ' .meme-textcontrol-dragoverlay').removeClass('hide')
+}
+
+var showPrintBtn = function(){
+    $('#print-btn').removeClass('hide')
+    $('.print-symbol').removeClass('hide')
+}
+
+var hidePrintBtn = function(){
+    $('#print-btn').addClass('hide')
+    $('.print-symbol').addClass('hide')
+}
+
+var arrayBufferToBase64 = function(buffer) {
+    var binary = '';
+    var bytes = new Uint8Array(buffer);
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+}
+
+var writeFile = function(data) {
+    var path = require('path')
+    //var p = path.join(__dirname, '..', 'out.png')
+    var p = 'C:\Users\apavia\Downloads\out.png'
+    var base64Data = data.replace(/^data:image\/png;base64,/, "")
+    var buff = new Buffer(base64Data, 'base64')
+    var fs = require('fs')
+    fs.writeFile(p, buff, 'base64', function(err,res) {
+        if(err) console.log(err)
+    });
+}
+
+var readFile = function(path) {
+    var fs = require('fs')
+    fs.readFile(path, function (err, contents) {
+        if(err) console.log(err)    
+        var blob = new Blob([contents], {'type': 'image/png'})
+        addImageToCanvas(URL.createObjectURL(blob))
+    })
+ }
+ 
+var readFileViaHttp = function(path) {
+      var http = new XMLHttpRequest();
+      http.open('GET', path, true);
+      http.responseType = 'arraybuffer';
+      http.send();
+      http.onreadystatechange = function() {
+        if (http.readyState == 4) {
+          var b64Response = arrayBufferToBase64(http.response)
+          addImageToCanvas('data:image/png;base64,' + b64Response)
+        }
+      }
+ }
+ 
+var readFileViaInput = function(input){
+    var file = input.files[0]
+    var reader = new FileReader()
+    reader.onload = function(e) {
+       addImageToCanvas(reader.result)                   
+    }
+    reader.readAsDataURL(file)
+ }
+
+var cleanCanvas = function(context, canvas) {
+    context.clearRect(0, 0, canvas.width, canvas.height)
+}
+
+var translateTxtPosToCanvasPos = function(e){
+    return {
+        left: parseInt(e.position().left)
+        , top: parseInt(e.position().top)  
+    }
 }
