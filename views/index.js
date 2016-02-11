@@ -46,29 +46,9 @@ var initialize = function() {
 } 
 var bindEvents = function() {
     $('.new-meme').on('change', function(){
-        var file = this.files[0]
-        var reader = new FileReader()
-        reader.onload = function(e) {
-            img = new Image()
-            img.setAttribute('crossOrigin', 'Anonymous')
-            img.src = reader.result
-            localStorage.selectedImage = reader.result 
-            cleanSlate()
-            img.onload = function(e) {
-                $('.top.txt-box').removeClass('hide')
-                $('.bottom.txt-box').removeClass('hide')
-                $('.bottom-controls').removeClass('hide')
-                $('#meme-canvas').addClass('with-border')
-                canvas.setAttribute('height', this.height)
-                canvas.setAttribute('width', this.width)
-                $('.img-wrapper').css({
-                    width: this.width 
-                    , height: this.height
-                })
-                ctx.drawImage(img, 0, 0)
-            }               
-        }
-        reader.readAsDataURL(file)
+        //readFileViaInput(this)
+        //readFile(this.files[0].path)
+        readFileViaHttp(this.files[0].path)
     })
     $('.top.txt-box').focusout(function(){
        addMoveCursor('.top.txt-box')
@@ -145,6 +125,11 @@ var prepareCanvasForDownload = function() {
     shadowCanvas.setAttribute('width', canvas.getAttribute('width'))
     document.body.appendChild(shadowCanvas)
     var shadowCtx = shadowCanvas.getContext('2d');
+    
+    insertTextInCanvas(shadowCanvas, shadowCtx)
+     
+}
+var insertTextInCanvas = function(shadowCanvas, shadowCtx) {
     //Styling top textbox and text area 
     var topTxtBox = $('.top.txt-box')
     var topTextarea =  $('.top.txt-box textarea')
@@ -181,33 +166,98 @@ var prepareCanvasForDownload = function() {
            '</svg>';
     var DOMURL = window.URL || window.webkitURL || window;
     var textImg = new Image();
-    textImg.setAttribute('crossOrigin', 'Anonymous');
     var svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
     var url = DOMURL.createObjectURL(svg);
     textImg.onload = function () {
         shadowCtx.drawImage(img, 0, 0);
         shadowCtx.drawImage(textImg, 0, 0);
         DOMURL.revokeObjectURL(url);
+        
         //Just for testing purposes
-        var canvasURL = shadowCanvas.toDataURL('image/jpeg');
+        /*
+        var canvasURL = shadowCanvas.toDataURL();
         var domImg = document.createElement('img')
         domImg.setAttribute('src', canvasURL)
         document.body.appendChild(domImg)
-        //Save file
-        saveFile(canvasURL)
+        */
+        var canvasURL = shadowCanvas.toDataURL();
+        writeFile(canvasURL)
     }
+    textImg.setAttribute('crossOrigin', 'Anonymous');
     textImg.src = url
+    //var canvasURL = shadowCanvas.toDataURL();
+    //writeFile(canvasURL)  
 }
-var saveFile = function(data) {
-    var path = require('path'); 
-    var p = path.join(__dirname, '..', 'out.png');
-    var base64Data = data.replace(/^data:image\/png;base64,/, "");
-    var buff = new Buffer(base64Data, 'base64');
-    var fs = require('fs');
+var writeFile = function(data) {
+    var path = require('path')
+    var p = path.join(__dirname, '..', 'out.png')
+    var base64Data = data.replace(/^data:image\/png;base64,/, "")
+    var buff = new Buffer(base64Data, 'base64')
+    var fs = require('fs')
     fs.writeFile(p, buff, 'base64', function(err,res) {
-        if(err) console.log(err);
+        if(err) console.log(err)
     });
 }
 
-
+var readFile = function(path) {
+    var fs = require('fs')
+    fs.readFile(path, function (err, contents) {
+        if(err) console.log(err)    
+        var blob = new Blob([contents], {'type': 'image/png'})
+        addImageToCanvas(URL.createObjectURL(blob))
+    })
+ }
  
+ var readFileViaHttp = function(path) {
+      var http = new XMLHttpRequest();
+      http.open('GET', path, true);
+      http.responseType = 'arraybuffer';
+      http.send();
+      http.onreadystatechange = function() {
+        console.log(http.readyState)
+        if (http.readyState == 4) {
+          var b64Response = arrayBufferToBase64(http.response)
+          addImageToCanvas('data:image/png;base64,' + b64Response)
+        }
+      }
+ }
+ 
+var readFileViaInput = function(input){
+    var file = input.files[0]
+    var reader = new FileReader()
+    reader.onload = function(e) {
+       addImageToCanvas(reader.result)                   
+    }
+    reader.readAsDataURL(file)
+ }
+ 
+ var addImageToCanvas = function(file){
+    img = new Image()
+    img.setAttribute('crossOrigin', 'Anonymous')
+    img.src = file
+    localStorage.selectedImage = file
+    cleanSlate()
+    img.onload = function(e) {
+        $('.top.txt-box').removeClass('hide')
+        $('.bottom.txt-box').removeClass('hide')
+        $('.bottom-controls').removeClass('hide')
+        $('#meme-canvas').addClass('with-border')
+        canvas.setAttribute('height', this.height)
+        canvas.setAttribute('width', this.width)
+        $('.img-wrapper').css({
+            width: this.width 
+            , height: this.height
+        })
+        ctx.drawImage(img, 0, 0)
+    } 
+ }
+ 
+var arrayBufferToBase64 = function(buffer) {
+    var binary = '';
+    var bytes = new Uint8Array(buffer);
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+};

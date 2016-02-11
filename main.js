@@ -17,7 +17,15 @@ const ipcMain = require('electron').ipcMain;
 // initialization and is ready to create browser windows.
 app.on('ready', function() {
     // Create the browser window.
-    mainWindow = new BrowserWindow({width: 1200, height: 1200});
+    mainWindow = new BrowserWindow({
+        width: 1200
+        , height: 1200
+        , 'web-preferences': {
+            'web-security': false
+            , 'allowDisplayingInsecureContent': true
+            , 'allowRunningInsecureContent': true
+        }
+   });
 
     // and load the index.html of the app.
     mainWindow.loadURL('file://' + __dirname + '/views/index.html');
