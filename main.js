@@ -10,6 +10,7 @@ const BrowserWindow = electron.BrowserWindow;
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let prefWindow;
+let print_win
 
 const ipcMain = require('electron').ipcMain;
 
@@ -18,20 +19,17 @@ const ipcMain = require('electron').ipcMain;
 app.on('ready', function() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 1200
-        , height: 1200
+        width: 800
+        , height: 800
         , 'web-preferences': {
             'web-security': false
             , 'allowDisplayingInsecureContent': true
             , 'allowRunningInsecureContent': true
         }
-   });
+    });
 
     // and load the index.html of the app.
     mainWindow.loadURL('file://' + __dirname + '/views/index.html');
-
-    // Open the DevTools.
-    mainWindow.webContents.openDevTools();
     
     // Emitted when the window is closed.
     mainWindow.on('closed', function() {
@@ -68,10 +66,27 @@ ipcMain.on('toggle-dev-tools', function(event, args){
 
 ipcMain.on('show-prefs', function() {
     prefWindow = new BrowserWindow({
+       'auto-hide-menu-bar':true,
         width: 450,
         height: 540,
         show: false
     }) 
     prefWindow.loadURL('file://' + __dirname + '/views/preferences.html') 
     prefWindow.show()
+})
+
+ipcMain.on('start-print', function(event, width, height) {
+    print_win = new BrowserWindow({
+        'auto-hide-menu-bar':true
+        , width: width
+        , height: height
+    }) 
+    print_win.loadURL('file://' + __dirname + '/views/printContent.html')
+    print_win.show()
+    print_win.webContents.on("did-finish-load", function() {
+      print_win.webContents.print()  
+    })
+    print_win.on('closed', function() {
+        print_win = null
+    })
 })

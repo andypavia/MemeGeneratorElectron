@@ -2,10 +2,13 @@ const ipcRenderer = require('electron').ipcRenderer
 var remote = require('remote')
 var shell = remote.require('shell')
 var Menu = remote.require('menu')
-
+var canvas
+    , ctx
+    , img
+    
 var menu = Menu.buildFromTemplate([
     {
-        label: 'Meme Generator'
+        label: 'File'
         , submenu: [
             {
                 label:'Refresh'
@@ -15,6 +18,31 @@ var menu = Menu.buildFromTemplate([
                 }
             }
             , {
+                label:'Save'
+                , click: function() {
+                    if(img)
+                        downloadCanvas()
+                }
+            }
+            , {
+                label:'Print'
+                , click: function() {
+                    if(img){
+                        downloadCanvas(function() {
+                            var width = $('#meme-canvas').width() + 17
+                            var height = $('#meme-canvas').height() + 37
+                            ipcRenderer.send('start-print', width, height)     
+                        })
+                    }
+                    
+                }
+            }
+        ]
+    }
+    , {
+        label: 'Options'
+        , submenu: [
+            {
                 label:'Developer Tools'
                 , click: function() {
                     ipcRenderer.send('toggle-dev-tools')
@@ -37,9 +65,7 @@ window.onload = function() {
     initialize()
     bindEvents()
 }
-var canvas
-    , ctx
-    , img
+
 var initialize = function() {
     $('.top.txt-box').draggable().resizable()
     $('.bottom.txt-box').draggable().resizable()
@@ -73,7 +99,12 @@ var bindEvents = function() {
         adjustText($('.bottom.txt-box')) 
     })
     $('.btn-download').click(function() {
-        prepareCanvasForDownload()
+        downloadCanvas()
+    })
+    $('#print-btn').on('click', function() {
+        var width = $('#meme-canvas').width() + 50
+        var height = $('#meme-canvas').height() + 100
+        ipcRenderer.send('start-print', width, height)
     })
     $('.top.txt-box').resize(function(event){
         adjustText($('.top.txt-box')) 
@@ -108,7 +139,7 @@ var adjustText = function(textbox) {
     textbox.width(width)    
 }
 
-var prepareCanvasForDownload = function() {   
+var downloadCanvas = function(callback) {   
     //Creating shadow canvas and context
     var shadowCanvas = document.createElement('canvas')
     shadowCanvas.id = 'shadow-canvas'
@@ -123,6 +154,8 @@ var prepareCanvasForDownload = function() {
     
     //show print button
     showPrintBtn()
+    if(callback)
+        callback()
 }
  
 var addImageToCanvas = function(file){
@@ -262,8 +295,8 @@ var addMoveCursor = function(selector) {
 }
 
 var showPrintBtn = function(){
-    $('#print-btn').removeClass('hide')
-    $('.print-symbol').removeClass('hide')
+    //$('#print-btn').removeClass('hide')
+   // $('.print-symbol').removeClass('hide')
 }
 
 var hidePrintBtn = function(){
@@ -283,8 +316,8 @@ var arrayBufferToBase64 = function(buffer) {
 
 var writeFile = function(data) {
     var path = require('path')
-    //var p = path.join(__dirname, '..', 'out.png')
-    var p = 'C:\Users\apavia\Downloads\out.png'
+    var p = path.join(__dirname, '..', 'out.png')
+    //var p = 'C:\Users\apavia\Downloads\out.png'
     var base64Data = data.replace(/^data:image\/png;base64,/, "")
     var buff = new Buffer(base64Data, 'base64')
     var fs = require('fs')
